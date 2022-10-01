@@ -39,7 +39,7 @@ class _UserProiflePageState extends State<UserProfilePage> {
               await Provider.of<UserProvider>(context, listen: false)
                   .updateProfile(AuthService.user!.uid, {'available': false});
               await AuthService.logout();
-              Navigator.pushReplacementNamed(context, LauncherPage.routeName);
+            await  Navigator.pushReplacementNamed(context, LauncherPage.routeName);
             },
             icon: Icon(Icons.logout),
           ),
