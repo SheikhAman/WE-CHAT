@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:we_chat/page/auth/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:we_chat/auth/auth_service.dart';
 import 'package:we_chat/page/login_page.dart';
+import 'package:we_chat/page/user_list_page.dart';
 import 'package:we_chat/page/user_profile.dart';
+
+import '../providers/user_provider.dart';
 
 class LauncherPage extends StatefulWidget {
   static const String routeName = '/launcher';
@@ -18,7 +22,9 @@ class _LauncherPageState extends State<LauncherPage> {
       if (AuthService.user == null) {
         Navigator.pushReplacementNamed(context, LoginPage.routeName);
       } else {
-        Navigator.pushReplacementNamed(context, UserProfilePage.routeName);
+        Provider.of<UserProvider>(context, listen: false)
+            .updateProfile(AuthService.user!.uid, {'available': true});
+        Navigator.pushReplacementNamed(context, UserListPage.routeName);
       }
     });
     // TODO: implement initState

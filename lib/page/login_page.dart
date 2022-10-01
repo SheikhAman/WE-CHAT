@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:we_chat/page/auth/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:we_chat/models/user_models.dart';
+import 'package:we_chat/auth/auth_service.dart';
 import 'package:we_chat/page/launcher_page.dart';
 import 'package:we_chat/page/user_profile.dart';
+import 'package:we_chat/providers/user_provider.dart';
 
 class LoginPage extends StatefulWidget {
   static const String routeName = '/login';
@@ -126,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
   void authenticate() async {
     if (formKey.currentState!.validate()) {
       try {
-        final status;
+        bool status;
         if (isLogin) {
           status = await AuthService.login(
               emailController.text, passController.text);
@@ -134,11 +137,20 @@ class _LoginPageState extends State<LoginPage> {
           status = await AuthService.register(
               emailController.text, passController.text);
           await AuthService.sendEmailVerification();
+          final userModel = UserModel(
+            uid: AuthService.user!.uid,
+            email: AuthService.user!.email,
+            // baki info nilamna  bakigulo pore update korbo
+          );
+          if (!mounted) return;
+          await Provider.of<UserProvider>(context, listen: false)
+              .addUser(userModel);
         }
         if (status) {
           // widget widget tree te thakle pushreplace korbe
           if (!mounted) return;
-          Navigator.pushReplacementNamed(context, UserProfilePage.routeName);
+
+          Navigator.pushReplacementNamed(context, LauncherPage.routeName);
         }
       } on FirebaseAuthException catch (e) {
         setState(() {
